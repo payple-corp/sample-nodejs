@@ -1,0 +1,127 @@
+<% include ./header.html %>
+    
+<style>
+
+input {
+    width: 300px;
+    height: 20px;
+    border: 1px solid gray
+}
+</style>
+<script type="text/javascript">
+$(document).ready( function () {
+
+	// payReqSend
+	$('#CardRegisterAction').on('click', function (e) {
+
+		// set default
+		e.preventDefault();
+
+		var con = "카드등록 요청합니다. \n 진행하시겠습니까? ";
+
+		if (confirm(con) == true) {
+		
+			var formSerializeArray = $('#cardRegisterForm').serializeArray();
+            var data = {};
+            
+            for(var i=0; i < formSerializeArray.length; i++) {
+                data[formSerializeArray[i]['name']] = formSerializeArray[i]['value'];    
+            }
+			
+			$.ajax({
+				url : '/cardRegister',
+                dataType: 'json',
+                type: 'POST',
+                data : data,
+				success : function (data) {
+                    
+					    console.log(data);
+                    
+                        alert(data.PCD_PAY_MSG);
+
+                        var $_table = $("<table></table>");
+                        var table_data = "";
+
+                        $.each(data, function (key, value) {
+                            table_data += '<tr><td>'+key+'</td><td>: '+value+'</td><tr>';
+                        });
+
+                        $_table.append(table_data);
+
+                        $_table.appendTo('#CardRegisterResult');
+				
+				},
+				error : function (jqxhr, status, error) {
+					console.log(jqxhr);
+					
+				    alert(jqxhr.statusText + ",  " + status + ",   " + error);
+				    alert(jqxhr.status);
+				    alert(jqxhr.responseText);
+				
+				}
+			});
+
+
+		} else {
+
+			return false;
+			
+		}
+			
+		
+	});
+	
+});
+</script>
+</head>
+<body>
+<?
+$payer_id = "d0toSS9sT084bVJSNThScnFXQm9Gdz09";
+?>
+	<form id="cardRegisterForm" name="cardRegisterForm">
+	  <div>
+	    <label for="PCD_PAYER_NO">가맹점 주문번호</label>
+	    <input type="text" name="PCD_PAYER_NO" id="PCD_PAYER_NO" value="">
+	  </div>
+      <div>
+	    <label for="PCD_PAYER_NAME">사용자 이름</label>
+	    <input type="text" name="PCD_PAYER_NAME" id="PCD_PAYER_NAME" value="">
+	  </div>
+	  <div>
+	  	<label for="PCD_REGULER_FLAG">정기결제여부</label>
+        <input type="text" name="PCD_REGULER_FLAG" id="PCD_REGULER_FLAG" value="">
+	  </div>
+      <div>
+	  	<label for="PCD_PAY_CARDNUM">카드번호</label>
+	  	<input type="text" name="PCD_PAY_CARDNUM" id="PCD_PAY_CARDNUM" value="">
+	  </div>
+      <div>
+	  	<label for="PCD_PAY_CARDEXYEAR">유효기간 년</label>
+	  	<input type="text" name="PCD_PAY_CARDEXYEAR" id="PCD_PAY_CARDEXYEAR" value="">
+	  </div>
+      <div>
+	  	<label for="PCD_PAY_CARDEXMONTH">유효기간 월</label>
+	  	<input type="text" name="PCD_PAY_CARDEXMONTH" id="PCD_PAY_CARDEXMONTH" value="">
+	  </div>
+      <div>
+	  	<label for="PCD_PAY_CARDPW">비밀번호 앞 두자리</label>
+	  	<input type="text" name="PCD_PAY_CARDPW" id="PCD_PAY_CARDPW" value="">
+	  </div>
+	  <div>
+	  	<label for="PCD_PAYER_BIRTH">생년월일</label>
+	  	<input type="number" name="PCD_PAYER_BIRTH" id="PCD_PAYER_BIRTH" value="">
+	  </div>
+	  <div>
+	  	<label for="PCD_PAYER_HP">HP</label>
+	  	<input type="text" name="PCD_PAYER_HP" id="PCD_PAYER_HP" value="">
+	  </div>
+	  <div>
+	  	<label for="PCD_PAYER_EMAIL">E-mail</label>
+	  	<input type="text" name="PCD_PAYER_EMAIL" id="PCD_PAYER_EMAIL" value="">
+	  </div>
+	</form>
+    <button id="CardRegisterAction">카드등록 요청</button>
+    
+    <div id='CardRegisterResult'></div>
+
+<% include ./footer.html %>
